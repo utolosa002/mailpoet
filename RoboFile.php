@@ -103,7 +103,8 @@ class RoboFile extends \Robo\Tasks {
       'assets/css/src/newsletter_editor/newsletter_editor.styl',
       'assets/css/src/public.styl',
       'assets/css/src/rtl.styl',
-      'assets/css/src/importExport.styl'
+      'assets/css/src/importExport.styl',
+      'assets/css/src/form_block/block.styl',
     );
 
     $compilation_result = $this->_exec(join(' ', array(
@@ -327,7 +328,7 @@ class RoboFile extends \Robo\Tasks {
     $collection->addCode(function() {
       return $this->qaCodeSniffer('all');
     });
-    $collection->addCode(array($this, 'qaLintJavascript'));
+    // $collection->addCode(array($this, 'qaLintJavascript'));
     return $collection->run();
   }
 

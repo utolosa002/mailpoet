@@ -5,7 +5,7 @@ namespace MailPoet\Config;
 use MailPoet\API;
 use MailPoet\Cron\CronTrigger;
 use MailPoet\DI\ContainerWrapper;
-use MailPoet\Models\Setting;
+use MailPoet\Form\Gutenberg\Blocks as FormGtbBlock;
 use MailPoet\Router;
 use MailPoet\Settings\SettingsController;
 use MailPoet\Util\ConflictResolver;
@@ -20,6 +20,7 @@ require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
 class Initializer {
   private $access_control;
+  /** @var Renderer */
   private $renderer;
   /** @var ContainerInterface */
   private $container;
@@ -144,6 +145,7 @@ class Initializer {
       $this->setupCapabilities();
       $this->setupMenu();
       $this->setupShortcodes();
+      $this->setupGutenbergFormBlock();
       $this->setupImages();
       $this->setupPersonalDataExporters();
       $this->setupPersonalDataErasers();
@@ -221,6 +223,11 @@ class Initializer {
   function setupShortcodes() {
     $shortcodes = new Shortcodes();
     $shortcodes->init();
+  }
+
+  function setupGutenbergFormBlock() {
+    $block = new FormGtbBlock($this->renderer);
+    $block->setupBlocks();
   }
 
   function setupImages() {
