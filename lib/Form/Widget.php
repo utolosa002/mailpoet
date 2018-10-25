@@ -18,7 +18,7 @@ class Widget extends \WP_Widget {
 
   const RECAPTCHA_API_URL = 'https://www.google.com/recaptcha/api.js?onload=reCaptchaCallback&render=explicit';
 
-  function __construct() {
+  function __construct($skip_iframe_setup = false) {
     parent::__construct(
       'mailpoet_form',
       __('MailPoet 3 Form', 'mailpoet'),
@@ -26,7 +26,7 @@ class Widget extends \WP_Widget {
     );
 
     $this->renderer = new \MailPoet\Config\Renderer(!WP_DEBUG, !WP_DEBUG);
-    if(!is_admin()) {
+    if(!is_admin() && !$skip_iframe_setup) {
       $this->setupIframe();
     } else {
       add_action('widgets_admin_page', array(

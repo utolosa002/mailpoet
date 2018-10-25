@@ -3,6 +3,8 @@ namespace MailPoet\Form\Gutenberg;
 
 use MailPoet\Config\Env;
 use MailPoet\Config\Renderer;
+use MailPoet\Form\Widget;
+use MailPoet\Models\Form;
 
 if(!defined('ABSPATH')) exit;
 
@@ -34,13 +36,21 @@ class Block {
           }
           $lists_data[] = $list;
         }
+        $forms = array_map(function($form) {
+          return $form->asArray();
+        }, Form::findMany())
         ?>
           <script type="text/javascript">
-            window.mailpoet_lists =<?php echo json_encode($lists_data) ?>
+            window.mailpoet_lists =<?php echo json_encode($lists_data) ?>;
+            window.mailpoet_forms =<?php echo json_encode($forms) ?>;
           </script>
         <?php
       });
     }
+
+    register_block_type( 'mailpoet/form-block-ss', array(
+      'render_callback' => [$this, 'renderForm'],
+    ) );
   }
 
   function registerEditorAssets() {
@@ -75,5 +85,21 @@ class Block {
       [],
       Env::$version
     );
+    $basicForm = new Widget(true);
+    $basicForm->setupDependencies();
+  }
+
+  function renderForm($attributes) {
+    if (!$attributes) {
+      return '';
+    }
+    $basicForm = new Widget(true);
+    $form_html = $basicForm->widget(
+      array(
+        'form' => (int) $attributes['form']['value'],
+        'form_type' => 'html'
+      )
+    );
+    return $form_html;
   }
 }

@@ -483,7 +483,7 @@ var blockEditorConfig = {
   name: 'block_editor',
   entry: {
     form_block_editor: [
-      'gutenberg_block/block.jsx'
+      'gutenberg_block/blocks.jsx'
     ]
   },
   externals: {
