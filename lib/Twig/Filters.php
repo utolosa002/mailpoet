@@ -1,10 +1,12 @@
 <?php
 
 namespace MailPoet\Twig;
+use MailPoetVendor\Twig_SimpleFilter;
+use MailPoetVendor\Twig_Extension;
 
 if (!defined('ABSPATH')) exit;
 
-class Filters extends \Twig_Extension {
+class Filters extends Twig_Extension {
 
   function getName() {
     return 'filters';
@@ -12,11 +14,11 @@ class Filters extends \Twig_Extension {
 
   function getFilters() {
     return array(
-      new \Twig_SimpleFilter(
+      new Twig_SimpleFilter(
         'intval',
         'intval'
       ),
-      new \Twig_SimpleFilter(
+      new Twig_SimpleFilter(
         'replaceLinkTags',
         'MailPoet\Util\Helpers::replaceLinkTags'
       )

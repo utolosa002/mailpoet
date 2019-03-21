@@ -3,10 +3,12 @@
 namespace MailPoet\Twig;
 
 use MailPoet\Settings\SettingsController;
+use MailPoetVendor\Twig_SimpleFunction;
+use MailPoetVendor\Twig_Extension;
 
 if (!defined('ABSPATH')) exit;
 
-class Polls extends \Twig_Extension {
+class Polls extends Twig_Extension {
 
   /** @var SettingsController */
   private $settings;
@@ -17,12 +19,12 @@ class Polls extends \Twig_Extension {
 
   public function getFunctions() {
     return array(
-      new \Twig_SimpleFunction(
+      new Twig_SimpleFunction(
         'get_polls_data',
         array($this, 'getPollsData'),
         array('is_safe' => array('all'))
       ),
-      new \Twig_SimpleFunction(
+      new Twig_SimpleFunction(
         'get_polls_visiblity',
         array($this, 'getPollsVisibility'),
         array('is_safe' => array('all'))

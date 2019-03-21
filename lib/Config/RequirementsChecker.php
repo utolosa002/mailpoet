@@ -21,11 +21,6 @@ class RequirementsChecker {
   public $vendor_classes = array(
     '\ORM',
     '\Model',
-    '\Twig_Environment',
-    '\Twig_Loader_Filesystem',
-    '\Twig_Lexer',
-    '\Twig_Extension',
-    '\Twig_SimpleFunction',
     '\Swift_Mailer',
     '\Swift_SmtpTransport',
     '\Swift_Message',

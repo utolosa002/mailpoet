@@ -4,10 +4,12 @@ namespace MailPoet\Twig;
 
 use MailPoet\Config\Localizer;
 use MailPoet\WP\Functions as WPFunctions;
+use MailPoetVendor\Twig_SimpleFunction;
+use MailPoetVendor\Twig_Extension;
 
 if (!defined('ABSPATH')) exit;
 
-class I18n extends \Twig_Extension {
+class I18n extends Twig_Extension {
 
   private $_text_domain;
 
@@ -30,7 +32,7 @@ class I18n extends \Twig_Extension {
     );
 
     foreach ($functions as $twig_function => $function) {
-      $twig_functions[] = new \Twig_SimpleFunction(
+      $twig_functions[] = new Twig_SimpleFunction(
         $twig_function,
         array($this, $function),
         array('is_safe' => array('all'))

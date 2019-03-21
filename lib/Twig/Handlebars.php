@@ -1,13 +1,15 @@
 <?php
 
 namespace MailPoet\Twig;
+use MailPoetVendor\Twig_SimpleFunction;
+use MailPoetVendor\Twig_Extension;
 
 if (!defined('ABSPATH')) exit;
 
-class Handlebars extends \Twig_Extension {
+class Handlebars extends Twig_Extension {
   public function getFunctions() {
     return array(
-      new \Twig_SimpleFunction(
+      new Twig_SimpleFunction(
         'partial',
         array(
           $this,
@@ -41,7 +43,7 @@ class Handlebars extends \Twig_Extension {
         return;
     }
 
-    $rendered_template = twig_include($env, $context, $file);
+    $rendered_template = \MailPoetVendor\twig_include($env, $context, $file);
 
     $output = <<<EOL
 <script id="$id" type="text/x-handlebars-template">
