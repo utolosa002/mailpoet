@@ -4,6 +4,7 @@ namespace MailPoet\Doctrine;
 
 use MailPoet\Config\Env;
 use MailPoetVendor\Doctrine\DBAL\Configuration;
+use MailPoetVendor\Doctrine\DBAL\Connection;
 use MailPoetVendor\Doctrine\DBAL\DriverManager;
 use MailPoetVendor\Doctrine\DBAL\Platforms\MySqlPlatform;
 use PDO;
@@ -11,6 +12,8 @@ use PDO;
 class ConnectionFactory {
   const DRIVER = 'pdo_mysql';
   const PLATFORM_CLASS = MySqlPlatform::class;
+
+  public $driver_option_wait_timeout = 60;
 
   function createConnection() {
     $platform_class = self::PLATFORM_CLASS;
@@ -28,7 +31,25 @@ class ConnectionFactory {
     ];
 
     $configuration = new Configuration();
-    return DriverManager::getConnection($connection_params, $configuration);
+    $connection = DriverManager::getConnection($connection_params, $configuration);
+    $this->setWaitTimeout($connection);
+    return $connection;
+  }
+
+  private function setWaitTimeout(Connection $connection) {
+    try {
+      $current_options = $connection->executeQuery('SELECT @@session.wait_timeout as wait_timeout')->fetch();
+      if ($current_options && (int)$current_options['wait_timeout'] < $this->driver_option_wait_timeout) {
+        $connection->executeUpdate(
+          'SET SESSION wait_timeout = ?',
+          [$this->driver_option_wait_timeout],
+          [PDO::PARAM_INT]
+        );
+      }
+    } catch (\PDOException $e) {
+      // rethrow PDOExceptions to prevent exposing sensitive data in stack traces
+      throw new \Exception($e->getMessage());
+    }
   }
 
   private function getDriverOptions($timezone_offset, $charset, $collation) {
