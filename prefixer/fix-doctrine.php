@@ -1,14 +1,113 @@
 <?php
 
 // Doctrine namespaces in string literals are not always correctly prefixed
-$iterator = new RecursiveDirectoryIterator("../vendor-prefixed/doctrine", RecursiveDirectoryIterator::SKIP_DOTS);
+$iterator = new RecursiveDirectoryIterator(__DIR__ . '/../vendor-prefixed/doctrine', RecursiveDirectoryIterator::SKIP_DOTS);
 $files = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
 foreach ($files as $file) {
   if (substr($file, -3) === 'php') {
     $data = file_get_contents($file);
+
+    // fix namespace prefixing
     $data = str_replace('\'Doctrine\\\\', '\'MailPoetVendor\\\\Doctrine\\\\', $data);
     $data = str_replace('"Doctrine\\\\', '"MailPoetVendor\\\\Doctrine\\\\', $data);
     $data = str_replace(' \\Doctrine\\', ' \\MailPoetVendor\\Doctrine\\', $data);
+
+    // remove comments for smaller builds
+    $cleaned_data = '';
+    foreach (token_get_all($data) as $token) {
+      if (is_array($token) && in_array($token[0], [T_COMMENT, T_DOC_COMMENT], true)) {
+        continue;
+      }
+      $cleaned_data .= is_array($token) ? $token[1] : $token;
+    }
+    //file_put_contents($file, $cleaned_data);
     file_put_contents($file, $data);
   }
 }
+
+exec('find ' . __DIR__ . "/../vendor-prefixed/doctrine -type f -name '*.xsd' -delete");
+exec('find ' . __DIR__ . "/../vendor-prefixed/doctrine -type f -name 'phpstan.neon' -delete");
+exec('find ' . __DIR__ . "/../vendor-prefixed/doctrine -type f -name 'build.xml' -delete");
+exec('find ' . __DIR__ . "/../vendor-prefixed/doctrine -type f -name 'build.properties' -delete");
+exec('find ' . __DIR__ . "/../vendor-prefixed/doctrine -type f -name 'UPGRADE_*' -delete");
+exec('find ' . __DIR__ . "/../vendor-prefixed/doctrine -type f -name 'README.markdown' -delete");
+
+// Cache
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/ApcCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/ApcuCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/ChainCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/CouchbaseCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/MemcacheCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/MemcachedCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/MongoDBCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/PhpFileCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/PredisCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/RedisCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/RiakCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/SQLite3Cache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/VoidCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/WinCacheCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/XcacheCache.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Cache/ZendDataCache.php');
+
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/cache/lib/Doctrine/Common/Persistence/Mapping/Driver/SymfonyFileLocator.php');
+
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/bin');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Tools');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Connections');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/DrizzlePDOMySql');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/IBMDB2');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/Mysqli');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/OCI8');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOIbm');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOOracle');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOPgSql');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOSqlite');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOSqlsrv');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/SQLAnywhere');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/SQLSrv');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/AbstractDB2Driver.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/AbstractOracleDriver.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/AbstractPostgreSQLDriver.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/AbstractSQLAnywhereDriver.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/AbstractSQLiteDriver.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/DB2Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/DrizzleKeywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/OracleKeywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/PostgreSQL91Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/PostgreSQL92Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/PostgreSQLKeywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLAnywhere11Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLAnywhere12Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLAnywhere16Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLAnywhereKeywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLiteKeywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLServer2005Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLServer2008Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLServer2012Keywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/Keywords/SQLServerKeywords.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/DB2Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/DrizzlePlatform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/OraclePlatform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/PostgreSQL91Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/PostgreSQL92Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/PostgreSqlPlatform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLAnywhere11Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLAnywhere12Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLAnywhere16Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLAnywherePlatform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLAzurePlatform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLitePlatform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLServer2005Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLServer2008Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLServer2012Platform.php');
+exec('rm ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Platforms/SQLServerPlatform.php');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Schema');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/dbal/lib/Doctrine/DBAL/Sharding');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/inflector');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/orm/bin');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/orm/docs');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/doctrine/orm/lib/Doctrine/ORM/Tools');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/symfony/console');
+exec('rm -r ' . __DIR__ . '/../vendor-prefixed/symfony/debug');
