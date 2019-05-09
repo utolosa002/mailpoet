@@ -294,6 +294,15 @@ class RoboFile extends \Robo\Tasks {
     );
   }
 
+  function doctrineGenerateMetadata() {
+    $metadata_dir = \MailPoet\Doctrine\ConfigurationFactory::METADATA_DIR;
+    $this->_exec("rm -rf $metadata_dir");
+
+    $entity_manager = $this->createDoctrineEntityManager();
+    $entity_manager->getMetadataFactory()->getAllMetadata();
+    $this->say("Doctrine metadata generated to: $metadata_dir");
+  }
+
   function qa() {
     $collection = $this->collectionBuilder();
     $collection->addCode(array($this, 'qaLint'));
@@ -742,5 +751,14 @@ class RoboFile extends \Robo\Tasks {
       exit(1);
     }
     return $env;
+  }
+
+  private function createDoctrineEntityManager() {
+    $configuration = (new \MailPoet\Doctrine\ConfigurationFactory(true))->createConfiguration();
+    $platform_class = \MailPoet\Doctrine\ConnectionFactory::PLATFORM_CLASS;
+    return \MailPoetVendor\Doctrine\ORM\EntityManager::create([
+      'driver' => \MailPoet\Doctrine\ConnectionFactory::DRIVER,
+      'platform' => new $platform_class,
+    ], $configuration);
   }
 }
