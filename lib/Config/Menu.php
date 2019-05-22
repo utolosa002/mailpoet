@@ -774,7 +774,6 @@ class Menu {
       'mss_active' => Bridge::isMPSendingServiceEnabled(),
     ];
     $this->wp->wpEnqueueMedia();
-    $this->wp->wpEnqueueScript('tinymce-wplink', $this->wp->includesUrl('js/tinymce/plugins/wplink/plugin.js'));
     $this->wp->wpEnqueueStyle('editor', $this->wp->includesUrl('css/editor.css'));
 
     $this->displayPage('newsletter/editor.html', $data);
