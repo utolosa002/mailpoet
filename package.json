@@ -100,6 +100,7 @@
     "postcss-cli": "^6.1.2",
     "sinon": "1.14.1",
     "sinon-chai": "2.7.0",
+    "string-replace-loader": "^2.1.1",
     "stylelint": "^9.10.1",
     "stylelint-order": "^2.1.0",
     "stylelint-scss": "^3.5.4",
