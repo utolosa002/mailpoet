@@ -101,7 +101,7 @@ jobs:
     - store_artifacts:
         path: /tmp/fake-mailer/
         destination: fake-mailer
-  php5_integration_and_js:
+  php5_integration:
     working_directory: /home/circleci/mailpoet
     docker:
     - image: mailpoet/wordpress:5.6.30_20180417.1
@@ -121,19 +121,9 @@ jobs:
         name: "Preparing test results folder"
         command: mkdir test-results
     - run:
-        name: "JS tests"
-        command: |
-          mkdir test-results/mocha
-          ./do t:j test-results/mocha/junit.xml
-    - run:
         name: "PHP Integration tests"
         command: |
           WP_ROOT="/home/circleci/mailpoet/wordpress" ./do test:integration --xml
-    - store_test_results:
-        path: test-results/mocha
-    - store_artifacts:
-        path: test-results/mocha
-        destination: mocha
     - store_test_results:
         path: tests/_output
     - store_artifacts:
@@ -142,6 +132,25 @@ jobs:
     - store_artifacts:
         path: /tmp/fake-mailer/
         destination: fake-mailer
+  javascript_tests:
+    working_directory: /home/circleci/mailpoet
+    docker:
+      - image: mailpoet/wordpress:5.6.30_20180417.1
+    environment:
+      TZ: /usr/share/zoneinfo/Etc/UTC
+    steps:
+      - attach_workspace:
+          at: /home/circleci/mailpoet
+      - run:
+          name: "JS tests"
+          command: |
+            mkdir -p test-results/mocha
+            ./do test:javascript test-results/mocha/junit.xml
+      - store_test_results:
+          path: test-results/mocha
+      - store_artifacts:
+          path: test-results/mocha
+          destination: mocha
   acceptance_tests_1:
     working_directory: /home/circleci/mailpoet
     machine: true
@@ -451,12 +460,15 @@ workflows:
       - acceptance_tests_4:
           requires:
             - php5_unit
-      - php5_integration_and_js:
+      - php5_integration:
           requires:
             - php5_unit
       - php7_integration:
           requires:
             - php7_unit
+      - javascript_tests:
+          requires:
+            - php5_unit
       - acceptance_tests_multisite_1:
           requires:
             - php5_unit
@@ -494,8 +506,9 @@ workflows:
             - acceptance_tests_2
             - acceptance_tests_3
             - acceptance_tests_4
-            - php5_integration_and_js
+            - php5_integration
             - php7_integration
+            - javascript_tests
       - test_deployment:
           requires:
             - build_release_zip
