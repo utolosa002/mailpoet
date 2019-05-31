@@ -445,9 +445,6 @@ class Menu {
   }
 
   function revenueTrackingPermission() {
-    if (!$this->features_controller->isSupported(FeaturesController::FEATURE_DISPLAY_WOOCOMMERCE_REVENUES)) {
-      return;
-    }
     if ((bool)(defined('DOING_AJAX') && DOING_AJAX)) return;
     $data = [
       'finish_wizard_url' => $this->wp->adminUrl('admin.php?page=' . self::MAIN_PAGE_SLUG),
@@ -532,7 +529,6 @@ class Menu {
       'current_user' => $this->wp->wpGetCurrentUser(),
       'linux_cron_path' => dirname(dirname(__DIR__)),
       'is_woocommerce_active' => $this->woocommerce_helper->isWooCommerceActive(),
-      'display_revenues' => $this->features_controller->isSupported(FeaturesController::FEATURE_DISPLAY_WOOCOMMERCE_REVENUES),
       'ABSPATH' => ABSPATH,
       'hosts' => [
         'web' => Hosts::getWebHosts(),
