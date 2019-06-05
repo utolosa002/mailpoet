@@ -132,8 +132,8 @@ class Hooks {
           'register_form',
           [$this->subscription_registration, 'extendForm']
         );
-        $this->wp->addAction(
-          'register_post',
+        $this->wp->addFilter(
+          'registration_errors',
           [$this->subscription_registration, 'onRegister'],
           60,
           3
